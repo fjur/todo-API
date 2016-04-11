@@ -42,15 +42,26 @@ app.get('/todos', function(req, res) {
 //GET /todos/:id
 app.get('/todos/:id', function(req, res) {
   var todoId = req.params.id
-  var matchedTodo = _.findWhere(todos, {
-    id: todoId
-  }); //where is part of underscore library
 
-  if (matchedTodo) {
-    res.json(matchedTodo);
-  } else {
-    res.status(404).send();
-  }
+  db.todo.findById(todoId).then(function(todo){
+    if (!!todo){ //!! converts an object to truthy or falsey
+      res.json(todo.toJSON());
+    } else {
+      res.status(404).send();
+    }
+  }, function(e){
+    res.status(500).send();
+  });
+
+  // var matchedTodo = _.findWhere(todos, {
+  //   id: todoId
+  // }); //where is part of underscore library
+
+  // if (matchedTodo) {
+  //   res.json(matchedTodo);
+  // } else {
+  //   res.status(404).send();
+  // }
 
   // res.status(404).send();
   // res.send('Asking for a todo with id of ' + req.params.id);
